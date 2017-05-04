@@ -20,6 +20,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.Wearable;
 import com.zenbarrier.mylibrary.WeatherTask;
+import com.zenbarrier.mylibrary.WeatherUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends Activity implements WeatherTask.OnTaskCompleted,
         GoogleApiClient.ConnectionCallbacks,
@@ -36,7 +40,6 @@ public class MainActivity extends Activity implements WeatherTask.OnTaskComplete
         setContentView(R.layout.activity_main);
 
         mTextView = (TextView) findViewById(R.id.textView_main);
-        mTextView.setText("Hello World");
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -65,7 +68,14 @@ public class MainActivity extends Activity implements WeatherTask.OnTaskComplete
 
     @Override
     public void onTaskCompleted(String result) {
-        mTextView.setText(result);
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            JSONObject mainJson = jsonObject.getJSONObject("main");
+            double temperature = WeatherUtil.kelvin2Fahrenheit(mainJson.getDouble("temp"));
+            mTextView.setText(temperature+"");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -100,6 +110,10 @@ public class MainActivity extends Activity implements WeatherTask.OnTaskComplete
                         }
                     }
                 });
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if(location!=null){
+            Log.d(TAG, location.toString());
+        }
     }
 
     public void checkPermission(){
