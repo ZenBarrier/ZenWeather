@@ -8,7 +8,7 @@ import android.os.AsyncTask;
  * This file is the fragment that holds all the preferences
  */
 
-public class WeatherTask extends AsyncTask<Void, Void, String> {
+public class WeatherTask extends AsyncTask<Double, Void, String> {
     private Context mContext;
 
     public interface OnTaskCompleted{
@@ -16,8 +16,8 @@ public class WeatherTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
-        return "hello result";
+    protected String doInBackground(Double... params) {
+        return params[0]+" "+params[1];
     }
 
     @Override
