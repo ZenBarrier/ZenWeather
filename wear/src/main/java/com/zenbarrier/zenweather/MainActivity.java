@@ -72,6 +72,8 @@ public class MainActivity extends Activity implements WeatherTask.OnTaskComplete
             JSONObject jsonObject = new JSONObject(result);
             JSONObject mainJson = jsonObject.getJSONObject("main");
             double temperature = WeatherUtil.kelvin2Fahrenheit(mainJson.getDouble("temp"));
+            String name = jsonObject.getString("name");
+            ((TextView)findViewById(R.id.textView_main_city)).setText(name);
             mTextView.setText(getString(R.string.degree_fahrenheit, Math.round(temperature)));
         } catch (JSONException e) {
             e.printStackTrace();
