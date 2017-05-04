@@ -1,5 +1,6 @@
 package com.zenbarrier.mylibrary;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 /**
@@ -7,9 +8,28 @@ import android.os.AsyncTask;
  * This file is the fragment that holds all the preferences
  */
 
-public class WeatherTask extends AsyncTask {
-    @Override
-    protected Object doInBackground(Object[] params) {
-        return null;
+public class WeatherTask extends AsyncTask<Void, Void, String> {
+    private Context mContext;
+
+    public interface OnTaskCompleted{
+        void onTaskCompleted(String result);
     }
+
+    @Override
+    protected String doInBackground(Void... params) {
+        return "hello result";
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        if(mContext instanceof OnTaskCompleted){
+            ((OnTaskCompleted) mContext).onTaskCompleted(result);
+        }
+    }
+
+    public WeatherTask(Context context){
+        mContext = context;
+    }
+
 }

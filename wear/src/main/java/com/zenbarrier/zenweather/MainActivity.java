@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+import com.zenbarrier.mylibrary.WeatherTask;
+
+public class MainActivity extends Activity implements WeatherTask.OnTaskCompleted {
 
     private TextView mTextView;
 
@@ -15,5 +17,13 @@ public class MainActivity extends Activity {
 
         mTextView = (TextView) findViewById(R.id.textView_main);
         mTextView.setText("Hello World");
+
+        WeatherTask weatherTask = new WeatherTask(this);
+        weatherTask.execute();
+    }
+
+    @Override
+    public void onTaskCompleted(String result) {
+        mTextView.setText(result);
     }
 }
