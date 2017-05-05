@@ -35,9 +35,18 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
         mContext = context;
     }
 
+    private int complicationId, dataType;
+    private Object complicationManager;
+    public GetLocationTask(Context context,int complicationId, int dataType, Object complicationManager){
+        this.complicationId = complicationId;
+        this.dataType = dataType;
+        this.complicationManager = complicationManager;
+        mContext = context;
+    }
+
     @Override
     protected void onPreExecute() {
-        super.onPreExecute();
+        //super.onPreExecute();
 
         GoogleApiClient.ConnectionCallbacks connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
             @Override
@@ -98,6 +107,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "Runnable ran");
                 Location location;
                 if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -122,6 +132,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
 
         while(true) {
             if (mLocation != null || isCancelled()) break;
+            //Log.d(TAG, "blah");
         }
         mHandler.removeCallbacksAndMessages(null);
         return mLocation;
@@ -141,9 +152,17 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
         if(mContext instanceof LocationTaskInterface && !isCancelled()){
             ((LocationTaskInterface) mContext).onLocationFound(location);
         }
+
+        if(mContext instanceof ComplicationInterface && !isCancelled()){
+            ((ComplicationInterface) mContext).onLocationFound(complicationId, dataType, complicationManager, location);
+        }
     }
 
     public interface LocationTaskInterface {
         void onLocationFound(Location location);
+    }
+
+    public interface ComplicationInterface{
+        void onLocationFound(int complicationId, int dataType, Object complicationManager, Location location);
     }
 }
