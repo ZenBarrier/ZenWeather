@@ -19,8 +19,8 @@ import java.util.Locale;
 public class WeatherTask extends AsyncTask<Double, Void, String> {
     private Context mContext;
 
-    public interface OnTaskCompleted{
-        void onTaskCompleted(String result);
+    public interface WeatherTaskInterface {
+        void onWeatherRetrieved(String result);
     }
 
     @Override
@@ -61,8 +61,8 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        if(mContext instanceof OnTaskCompleted){
-            ((OnTaskCompleted) mContext).onTaskCompleted(result);
+        if(mContext instanceof WeatherTaskInterface){
+            ((WeatherTaskInterface) mContext).onWeatherRetrieved(result);
         }
     }
 

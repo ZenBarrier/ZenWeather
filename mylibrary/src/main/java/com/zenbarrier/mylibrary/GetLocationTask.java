@@ -138,12 +138,12 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
 
         mGoogleApiClient.disconnect();
 
-        if(mContext instanceof OnLocationFound && !isCancelled()){
-            ((OnLocationFound) mContext).onLocationFound(location);
+        if(mContext instanceof LocationTaskInterface && !isCancelled()){
+            ((LocationTaskInterface) mContext).onLocationFound(location);
         }
     }
 
-    public interface OnLocationFound{
+    public interface LocationTaskInterface {
         void onLocationFound(Location location);
     }
 }

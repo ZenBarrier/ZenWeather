@@ -13,8 +13,8 @@ import com.zenbarrier.mylibrary.WeatherUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends Activity implements WeatherTask.OnTaskCompleted,
-        GetLocationTask.OnLocationFound {
+public class MainActivity extends Activity implements WeatherTask.WeatherTaskInterface,
+        GetLocationTask.LocationTaskInterface {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextView;
@@ -32,7 +32,7 @@ public class MainActivity extends Activity implements WeatherTask.OnTaskComplete
     }
 
     @Override
-    public void onTaskCompleted(String result) {
+    public void onWeatherRetrieved(String result) {
         try {
             JSONObject jsonObject = new JSONObject(result);
             JSONObject mainJson = jsonObject.getJSONObject("main");
