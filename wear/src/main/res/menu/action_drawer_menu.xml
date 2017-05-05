@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_temperature_unit"
+        android:icon="@drawable/ic_sun"
+        android:title="Change Unit" />
+    <item android:id="@+id/menu_location"
+        android:icon="@drawable/ic_sun"
+        android:title="Location" />
+
+</menu>

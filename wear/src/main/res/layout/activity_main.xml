@@ -1,28 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.wearable.view.drawer.WearableDrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp">
+    tools:context=".MainActivity"
+    tools:deviceIds="wear">
 
-    <FrameLayout
+
+    <android.support.wearable.view.BoxInsetLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
-        app:layout_box="all">
+        android:padding="15dp">
 
-        <TextView
-            android:id="@+id/textView_main"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center|top"
-            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            app:layout_box="all">
 
-        <TextView
-            android:id="@+id/textView_main_city"
-            android:layout_width="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textView_main_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="67°F"
+                android:layout_gravity="center|top" />
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/textView_main_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="New York"
+                android:layout_gravity="bottom|center" />
+        </FrameLayout>
+    </android.support.wearable.view.BoxInsetLayout>
 
-</android.support.wearable.view.BoxInsetLayout>
+    <android.support.wearable.view.drawer.WearableActionDrawer
+        android:id="@+id/bottom_action_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:action_menu="@menu/action_drawer_menu"
+        app:show_overflow_in_peek="true" />
+
+
+</android.support.wearable.view.drawer.WearableDrawerLayout>
