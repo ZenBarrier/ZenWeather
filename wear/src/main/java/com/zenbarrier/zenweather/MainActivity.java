@@ -1,10 +1,12 @@
 package com.zenbarrier.zenweather;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.wearable.complications.ProviderUpdateRequester;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.util.Log;
 import android.view.MenuItem;
@@ -40,7 +42,7 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         mWearableActionDrawer.peekDrawer();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mIsCelsius = sharedPreferences.getBoolean(getString(R.string.PREF_KEY_IS_CELSIUS), false);
+        mIsCelsius = sharedPreferences.getBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), false);
         MenuItem unitMenuItem = mWearableActionDrawer.getMenu().findItem(R.id.menu_temperature_unit);
         if(mIsCelsius){
             unitMenuItem.setTitle("Change to °F");
@@ -76,8 +78,14 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
             menuItem.setTitle("Change to °C");
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferences.edit().putBoolean(getString(R.string.PREF_KEY_IS_CELSIUS), mIsCelsius).apply();
+        sharedPreferences.edit().putBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), mIsCelsius).apply();
+
         setTemperatureDisplay(mTemperatureK);
+        ComponentName componentName = new ComponentName(this, TemperatureComplicationService.class);
+
+        ProviderUpdateRequester providerUpdateRequester = new ProviderUpdateRequester(this, componentName);
+        providerUpdateRequester.requestUpdateAll();
+
         mWearableActionDrawer.peekDrawer();
 
     }

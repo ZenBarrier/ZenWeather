@@ -2,5 +2,5 @@
     <string name="app_name">Zen Weather</string>
     <string name="degree_fahrenheit">%d°F</string>
     <string name="degree_celsius">%d°C</string>
-    <string name="PREF_KEY_IS_CELSIUS">PREF_KEY_IS_CELSIUS</string>
+    <string name="KEY_PREF_IS_CELSIUS">KEY_PREF_IS_CELSIUS</string>
 </resources>
