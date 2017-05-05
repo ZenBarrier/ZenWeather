@@ -54,33 +54,25 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
                     }
                 };
 
-                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                LocationServices.FusedLocationApi
-                        .requestLocationUpdates(mGoogleApiClient, locationRequest, mLocationListener)
-                        .setResultCallback(new ResultCallback<com.google.android.gms.common.api.Status>() {
-                            @Override
-                            public void onResult(@NonNull com.google.android.gms.common.api.Status status) {
-                                if (status.getStatus().isSuccess()) {
-                                    Log.d(TAG, "Successfully requested location updates.");
-                                } else {
-                                    Log.e(TAG,
-                                            "Failed in requesting location updates, "
-                                                    + "status code: "
-                                                    + status.getStatusCode()
-                                                    + ", message: "
-                                                    + status.getStatusMessage());
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    LocationServices.FusedLocationApi
+                            .requestLocationUpdates(mGoogleApiClient, locationRequest, mLocationListener)
+                            .setResultCallback(new ResultCallback<com.google.android.gms.common.api.Status>() {
+                                @Override
+                                public void onResult(@NonNull com.google.android.gms.common.api.Status status) {
+                                    if (status.getStatus().isSuccess()) {
+                                        Log.d(TAG, "Successfully requested location updates.");
+                                    } else {
+                                        Log.e(TAG,
+                                                "Failed in requesting location updates, "
+                                                        + "status code: "
+                                                        + status.getStatusCode()
+                                                        + ", message: "
+                                                        + status.getStatusMessage());
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
 
             @Override
@@ -106,10 +98,20 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Location location = new Location("");
-                location.setLatitude(0);
-                location.setLongitude(0);
-                mLocation = location;
+                Location location;
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    if(location != null){
+                        mLocation = location;
+                    }else {
+                        location = new Location("");
+                        location.setLatitude(0);
+                        location.setLongitude(0);
+                        mLocation = location;
+                    }
+                }else{
+                    mLocation = new Location("");
+                }
             }
         }, 500);
     }
@@ -118,7 +120,9 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
     @Override
     protected Location doInBackground(Void... params) {
 
-        while(mLocation == null && !isCancelled());
+        while(true) {
+            if (mLocation != null || isCancelled()) break;
+        }
         mHandler.removeCallbacksAndMessages(null);
         return mLocation;
     }
