@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
     private TextView mTextView;
     private WearableActionDrawer mWearableActionDrawer;
     private boolean mIsCelsius;
+    private double mTemperatureK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +54,18 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         try {
             JSONObject jsonObject = new JSONObject(result);
             JSONObject mainJson = jsonObject.getJSONObject("main");
-            double temperature = WeatherUtil.kelvin2Fahrenheit(mainJson.getDouble("temp"));
+            mTemperatureK = mainJson.getDouble("temp");
             String name = jsonObject.getString("name");
             ((TextView)findViewById(R.id.textView_main_city)).setText(name);
-            mTextView.setText(getString(R.string.degree_fahrenheit, Math.round(temperature)));
+            setTemperatureDisplay(mTemperatureK);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTemperatureDisplay(double temperatureK){
+        long temp = Math.round(mIsCelsius ? WeatherUtil.kelvin2Celsius(temperatureK) : WeatherUtil.kelvin2Fahrenheit(temperatureK));
+        mTextView.setText(getString(R.string.degree_fahrenheit, temp));
     }
 
     public void changeUnit(MenuItem menuItem){
@@ -71,6 +77,7 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.edit().putBoolean(getString(R.string.PREF_KEY_IS_CELSIUS), mIsCelsius).apply();
+        setTemperatureDisplay(mTemperatureK);
         mWearableActionDrawer.peekDrawer();
 
     }
