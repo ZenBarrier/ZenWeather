@@ -1,13 +1,12 @@
 package com.zenbarrier.zenweather;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.wearable.view.drawer.WearableActionDrawer;
-import android.support.wearable.view.drawer.WearableDrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -19,20 +18,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity implements WeatherTask.WeatherTaskInterface,
-        GetLocationTask.LocationTaskInterface, WearableActionDrawer.OnMenuItemClickListener {
+        GetLocationTask.LocationTaskInterface {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextView;
-    private WearableDrawerLayout mWearableDrawerLayout;
     private WearableActionDrawer mWearableActionDrawer;
+    private boolean mIsCelsius;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mWearableDrawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout);
-        mWearableDrawerLayout.peekDrawer(Gravity.BOTTOM);
 
         mTextView = (TextView) findViewById(R.id.textView_main_temp);
 
@@ -40,9 +36,16 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         locationTask.execute();
 
         mWearableActionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer);
-        mWearableActionDrawer.setOnMenuItemClickListener(this);
-        mWearableActionDrawer.setTitle("title");
+        mWearableActionDrawer.peekDrawer();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mIsCelsius = sharedPreferences.getBoolean(getString(R.string.PREF_KEY_IS_CELSIUS), false);
+        MenuItem unitMenuItem = mWearableActionDrawer.getMenu().findItem(R.id.menu_temperature_unit);
+        if(mIsCelsius){
+            unitMenuItem.setTitle("Change to °F");
+        }else{
+            unitMenuItem.setTitle("Change to °C");
+        }
     }
 
     @Override
@@ -59,6 +62,19 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         }
     }
 
+    public void changeUnit(MenuItem menuItem){
+        mIsCelsius = !mIsCelsius;
+        if(mIsCelsius){
+            menuItem.setTitle("Change to °F");
+        }else{
+            menuItem.setTitle("Change to °C");
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putBoolean(getString(R.string.PREF_KEY_IS_CELSIUS), mIsCelsius).apply();
+        mWearableActionDrawer.peekDrawer();
+
+    }
+
     @Override
     public void onLocationFound(Location location) {
         Log.d(TAG, location.toString());
@@ -66,16 +82,4 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         weatherTask.execute(location.getLatitude(), location.getLongitude());
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        switch (menuItem.getItemId()){
-            case R.id.menu_location:
-                break;
-            case R.id.menu_temperature_unit:
-                break;
-            default:
-                return false;
-        }
-        return true;
-    }
 }

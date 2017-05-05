@@ -3,9 +3,7 @@
 
     <item android:id="@+id/menu_temperature_unit"
         android:icon="@drawable/ic_sun"
-        android:title="Change Unit" />
-    <item android:id="@+id/menu_location"
-        android:icon="@drawable/ic_sun"
-        android:title="Location" />
+        android:onClick="changeUnit"
+        android:title="" />
 
 </menu>
