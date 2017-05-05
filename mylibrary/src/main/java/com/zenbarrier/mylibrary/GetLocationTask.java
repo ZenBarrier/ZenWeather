@@ -46,7 +46,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
 
     @Override
     protected void onPreExecute() {
-        //super.onPreExecute();
+        super.onPreExecute();
 
         GoogleApiClient.ConnectionCallbacks connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
             @Override
