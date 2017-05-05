@@ -66,8 +66,10 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
     }
 
     public void setTemperatureDisplay(double temperatureK){
-        long temp = Math.round(mIsCelsius ? WeatherUtil.kelvin2Celsius(temperatureK) : WeatherUtil.kelvin2Fahrenheit(temperatureK));
-        mTextView.setText(getString(R.string.degree_fahrenheit, temp));
+        long temp = Math.round(mIsCelsius ? WeatherUtil.kelvin2Celsius(temperatureK) :
+                WeatherUtil.kelvin2Fahrenheit(temperatureK));
+        mTextView.setText(mIsCelsius ? getString(R.string.degree_celsius, temp) :
+                getString(R.string.degree_fahrenheit, temp));
     }
 
     public void changeUnit(MenuItem menuItem){
