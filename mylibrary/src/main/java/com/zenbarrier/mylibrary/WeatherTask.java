@@ -38,7 +38,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
 
         long timeStamp = sharedPreferences.getLong(KEY_PREF_WEATHER_TIME_STAMP, System.currentTimeMillis());
         long currentTimeStamp = System.currentTimeMillis();
-        if((currentTimeStamp - timeStamp) <= ONE_HOUR_MS){
+        if((currentTimeStamp - timeStamp) <= ONE_HOUR_MS/2){
             return sharedPreferences.getString(KEY_PREF_WEATHER_JSON, "");
         }
 
