@@ -48,7 +48,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
                 "http://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s", lat, lng, appId);
 
         HttpURLConnection connection;
-        BufferedReader reader = null;
+        BufferedReader reader;
 
         try{
             URL url = new URL(urlString);
