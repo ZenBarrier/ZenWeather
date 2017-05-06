@@ -2,11 +2,13 @@ package com.zenbarrier.mylibrary;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +26,8 @@ import com.google.android.gms.wearable.Wearable;
 public class GetLocationTask extends AsyncTask<Void, Void, Location> {
 
     private static final String TAG = GetLocationTask.class.getSimpleName();
+    private static final String KEY_PREF_LATITUDE = "KEY_PREF_LATITUDE";
+    private static final String KEY_PREF_LONGITUDE = "KEY_PREF_LONGITUDE";
 
     private Context mContext;
     private LocationListener mLocationListener;
@@ -59,6 +63,10 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
                 mLocationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
+                        mHandler.removeCallbacksAndMessages(null);
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                        sharedPreferences.edit().putFloat(KEY_PREF_LONGITUDE, (float) location.getLongitude())
+                                .putFloat(KEY_PREF_LATITUDE, (float) location.getLatitude()).apply();
                         mLocation = location;
                     }
                 };
@@ -114,18 +122,24 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
                     if(location != null){
                         mLocation = location;
                     }else {
-                        location = new Location("");
-                        location.setLatitude(0);
-                        location.setLongitude(0);
-                        mLocation = location;
+                        getSavedLocation();
                     }
                 }else{
-                    mLocation = new Location("");
+                    getSavedLocation();
                 }
             }
         }, 500);
     }
 
+    private void getSavedLocation(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        float lat = sharedPreferences.getFloat(KEY_PREF_LATITUDE, 0);
+        float lon = sharedPreferences.getFloat(KEY_PREF_LONGITUDE, 0);
+        Location location = new Location("");
+        location.setLongitude(lon);
+        location.setLatitude(lat);
+        mLocation = location;
+    }
 
     @Override
     protected Location doInBackground(Void... params) {
@@ -134,7 +148,6 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
             if (mLocation != null || isCancelled()) break;
             //Log.d(TAG, "blah");
         }
-        mHandler.removeCallbacksAndMessages(null);
         return mLocation;
     }
 
