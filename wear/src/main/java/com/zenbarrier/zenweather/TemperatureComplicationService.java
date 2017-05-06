@@ -10,7 +10,6 @@ import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
-import android.util.Log;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
 import com.zenbarrier.mylibrary.WeatherTask;
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeoutException;
 
 public class TemperatureComplicationService extends ComplicationProviderService
         implements GetLocationTask.ComplicationInterface {
-    private static final String TAG = TemperatureComplicationService.class.getSimpleName();
     @Override
     public void onComplicationUpdate(int complicationId, int dataType, ComplicationManager complicationManager) {
         GetLocationTask locationTask = new GetLocationTask(this, complicationId, dataType, complicationManager);
@@ -46,7 +44,6 @@ public class TemperatureComplicationService extends ComplicationProviderService
                 WeatherTask weatherTask = new WeatherTask(this);
                 weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location.getLatitude(), location.getLongitude());
                 result = weatherTask.get(1000, TimeUnit.MILLISECONDS);
-                Log.d(TAG, result);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 e.printStackTrace();
             }
