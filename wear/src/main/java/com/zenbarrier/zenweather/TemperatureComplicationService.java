@@ -3,6 +3,7 @@ package com.zenbarrier.zenweather;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -40,6 +41,9 @@ public class TemperatureComplicationService extends ComplicationProviderService
 
             String result="";
             Double tempKelvin = null;
+            Double tempMinKelvin = null;
+            Double tempMaxKelvin = null;
+            String name = "";
             try {
                 WeatherTask weatherTask = new WeatherTask(this);
                 weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location.getLatitude(), location.getLongitude());
@@ -51,29 +55,63 @@ public class TemperatureComplicationService extends ComplicationProviderService
                 JSONObject weatherJson = new JSONObject(result);
                 JSONObject mainJson = weatherJson.getJSONObject("main");
                 tempKelvin = mainJson.getDouble("temp");
+                tempMinKelvin = mainJson.getDouble("temp_min");
+                tempMaxKelvin = mainJson.getDouble("temp_max");
+                name = weatherJson.getString("name");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            ComplicationData.Builder complicationData = new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT);
-
-            Intent intent = new Intent(this, MainActivity.class);
-            PendingIntent openAppIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-            complicationData.setTapAction(openAppIntent);
-
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             boolean isCelsius = sharedPreferences.getBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), false);
 
-            if(tempKelvin != null){
-                long temp = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempKelvin):
+            String temperatureText = "";
+            String tempMinText = "";
+            String tempMaxText = "";
+            if (tempKelvin != null && tempMinKelvin != null && tempMaxKelvin != null) {
+                long temp = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempKelvin) :
                         WeatherUtil.kelvin2Fahrenheit(tempKelvin));
-                String temperatureText = isCelsius ? getString(R.string.degree_celsius, temp) :
+                long tempMin = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempMinKelvin) :
+                        WeatherUtil.kelvin2Fahrenheit(tempMinKelvin));
+                long tempMax = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempMaxKelvin) :
+                        WeatherUtil.kelvin2Fahrenheit(tempMaxKelvin));
+                temperatureText = isCelsius ? getString(R.string.degree_celsius, temp) :
                         getString(R.string.degree_fahrenheit, temp);
-                complicationData.setShortText(
-                        ComplicationText.plainText(temperatureText));
+                tempMinText = isCelsius ? getString(R.string.degree_celsius, tempMin) :
+                        getString(R.string.degree_fahrenheit, tempMin);
+                tempMaxText = isCelsius ? getString(R.string.degree_celsius, tempMax) :
+                        getString(R.string.degree_fahrenheit, tempMax);
             }
-            ((ComplicationManager)complicationManager).updateComplicationData(complicationId, complicationData.build());
+
+            ComplicationData.Builder complicationData = null;
+            switch (dataType){
+                case ComplicationData.TYPE_SHORT_TEXT:
+                    complicationData = new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT);
+                    complicationData.setShortText(
+                            ComplicationText.plainText(temperatureText));
+                    break;
+                case ComplicationData.TYPE_LONG_TEXT:
+                    complicationData = new ComplicationData.Builder(ComplicationData.TYPE_LONG_TEXT);
+                    complicationData.setLongTitle(ComplicationText.plainText(
+                            getString(R.string.complication_long_title, temperatureText, name)));
+                    complicationData.setLongText(
+                            ComplicationText.plainText(
+                                    getString(R.string.complication_long_text, tempMinText, tempMaxText)));
+                    break;
+            }
+
+            if(complicationData != null) {
+                //todo icons for weather
+                //complicationData.setIcon(Icon.createWithResource(this, R.drawable.ic_sun));
+                Intent intent = new Intent(this, MainActivity.class);
+                PendingIntent openAppIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+                complicationData.setTapAction(openAppIntent);
+
+
+
+                ((ComplicationManager) complicationManager).updateComplicationData(complicationId, complicationData.build());
+            }
 
         }
     }

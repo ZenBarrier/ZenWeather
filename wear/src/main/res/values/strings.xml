@@ -2,5 +2,7 @@
     <string name="app_name">Zen Weather</string>
     <string name="degree_fahrenheit">%d°F</string>
     <string name="degree_celsius">%d°C</string>
+    <string name="complication_long_title">%1$s in %2$s</string>
+    <string name="complication_long_text">Lo %1$s - Hi %2$s</string>
     <string name="KEY_PREF_IS_CELSIUS">KEY_PREF_IS_CELSIUS</string>
 </resources>
