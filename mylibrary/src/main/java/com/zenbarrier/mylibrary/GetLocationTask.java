@@ -128,7 +128,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
                     getSavedLocation();
                 }
             }
-        }, 500);
+        }, 700);
     }
 
     private void getSavedLocation(){
