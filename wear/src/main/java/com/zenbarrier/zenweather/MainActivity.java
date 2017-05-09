@@ -13,11 +13,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
+import com.zenbarrier.mylibrary.Weather;
 import com.zenbarrier.mylibrary.WeatherTask;
 import com.zenbarrier.mylibrary.WeatherUtil;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends Activity implements WeatherTask.WeatherTaskInterface,
         GetLocationTask.LocationTaskInterface {
@@ -54,10 +54,9 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
     @Override
     public void onWeatherRetrieved(String result) {
         try {
-            JSONObject jsonObject = new JSONObject(result);
-            JSONObject mainJson = jsonObject.getJSONObject("main");
-            mTemperatureK = mainJson.getDouble("temp");
-            String name = jsonObject.getString("name");
+            Weather weather = new Weather(result);
+            mTemperatureK = weather.getTemperature();
+            String name = weather.getName();
             ((TextView)findViewById(R.id.textView_main_city)).setText(name);
             setTemperatureDisplay(mTemperatureK);
         } catch (JSONException e) {
