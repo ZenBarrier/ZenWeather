@@ -10,6 +10,7 @@ import android.support.wearable.complications.ProviderUpdateRequester;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
             Weather weather = new Weather(result);
             mTemperatureK = weather.getTemperature();
             String name = weather.getName();
+            ((ImageView)findViewById(R.id.imageView_main_icon)).setImageResource(weather.getIconResourceCode());
             ((TextView)findViewById(R.id.textView_main_city)).setText(name);
             setTemperatureDisplay(mTemperatureK);
         } catch (JSONException e) {
