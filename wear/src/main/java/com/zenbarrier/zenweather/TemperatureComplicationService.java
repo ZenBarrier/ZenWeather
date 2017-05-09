@@ -13,11 +13,11 @@ import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
+import com.zenbarrier.mylibrary.Weather;
 import com.zenbarrier.mylibrary.WeatherTask;
 import com.zenbarrier.mylibrary.WeatherUtil;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -40,11 +40,6 @@ public class TemperatureComplicationService extends ComplicationProviderService
         if(complicationManager instanceof ComplicationManager){
 
             String result="";
-            Double tempKelvin = null;
-            Double tempMinKelvin = null;
-            Double tempMaxKelvin = null;
-            String name = "";
-            String iconString = "";
             try {
                 WeatherTask weatherTask = new WeatherTask(this);
                 weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location.getLatitude(), location.getLongitude());
@@ -52,14 +47,9 @@ public class TemperatureComplicationService extends ComplicationProviderService
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 e.printStackTrace();
             }
+            Weather weather = null;
             try {
-                JSONObject weatherJson = new JSONObject(result);
-                JSONObject mainJson = weatherJson.getJSONObject("main");
-                tempKelvin = mainJson.getDouble("temp");
-                tempMinKelvin = mainJson.getDouble("temp_min");
-                tempMaxKelvin = mainJson.getDouble("temp_max");
-                name = weatherJson.getString("name");
-                iconString = weatherJson.getJSONArray("weather").getJSONObject(0).getString("icon");
+                weather = new Weather(result);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -70,13 +60,13 @@ public class TemperatureComplicationService extends ComplicationProviderService
             String temperatureText = "";
             String tempMinText = "";
             String tempMaxText = "";
-            if (tempKelvin != null && tempMinKelvin != null && tempMaxKelvin != null) {
-                long temp = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempKelvin) :
-                        WeatherUtil.kelvin2Fahrenheit(tempKelvin));
-                long tempMin = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempMinKelvin) :
-                        WeatherUtil.kelvin2Fahrenheit(tempMinKelvin));
-                long tempMax = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(tempMaxKelvin) :
-                        WeatherUtil.kelvin2Fahrenheit(tempMaxKelvin));
+            if(weather != null) {
+                long temp = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(weather.getTemperature()) :
+                        WeatherUtil.kelvin2Fahrenheit(weather.getTemperature()));
+                long tempMin = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(weather.getMinTemperature()) :
+                        WeatherUtil.kelvin2Fahrenheit(weather.getMinTemperature()));
+                long tempMax = Math.round(isCelsius ? WeatherUtil.kelvin2Celsius(weather.getMaxTemperature()) :
+                        WeatherUtil.kelvin2Fahrenheit(weather.getMaxTemperature()));
                 temperatureText = isCelsius ? getString(R.string.degree_celsius, temp) :
                         getString(R.string.degree_fahrenheit, temp);
                 tempMinText = isCelsius ? getString(R.string.degree_celsius, tempMin) :
@@ -94,22 +84,22 @@ public class TemperatureComplicationService extends ComplicationProviderService
                     break;
                 case ComplicationData.TYPE_LONG_TEXT:
                     complicationData = new ComplicationData.Builder(ComplicationData.TYPE_LONG_TEXT);
-                    complicationData.setLongTitle(ComplicationText.plainText(
-                            getString(R.string.complication_long_title, temperatureText, name)));
+                    if(weather != null) {
+                        complicationData.setLongTitle(ComplicationText.plainText(
+                                getString(R.string.complication_long_title, temperatureText, weather.getName())));
+                    }
                     complicationData.setLongText(
                             ComplicationText.plainText(
                                     getString(R.string.complication_long_text, tempMinText, tempMaxText)));
                     break;
             }
 
-            if(complicationData != null) {
-                complicationData.setIcon(Icon.createWithResource(this, iconCode(iconString)));
+            if(complicationData != null && weather != null) {
+                complicationData.setIcon(Icon.createWithResource(this, weather.getIconResourceCode()));
                 Intent intent = new Intent(this, MainActivity.class);
                 PendingIntent openAppIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
                 complicationData.setTapAction(openAppIntent);
-
-
 
                 ((ComplicationManager) complicationManager).updateComplicationData(complicationId, complicationData.build());
             }
@@ -117,19 +107,4 @@ public class TemperatureComplicationService extends ComplicationProviderService
         }
     }
 
-    private int iconCode(String code){
-        int codeNum = Integer.parseInt(code.substring(0,2));
-        switch (codeNum){
-            case 1: return R.drawable.ic_sun;
-            case 2: return R.drawable.ic_part_cloud;
-            case 3: return R.drawable.ic_cloud;
-            case 4: return R.drawable.ic_broken_clouds;
-            case 9: return R.drawable.ic_rain;
-            case 10: return R.drawable.ic_light_rain;
-            case 11: return R.drawable.ic_thunder;
-            case 13: return R.drawable.ic_snow;
-            case 50: return R.drawable.ic_mist;
-            default: return 0;
-        }
-    }
 }
