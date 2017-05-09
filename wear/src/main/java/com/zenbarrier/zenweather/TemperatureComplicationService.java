@@ -44,6 +44,7 @@ public class TemperatureComplicationService extends ComplicationProviderService
             Double tempMinKelvin = null;
             Double tempMaxKelvin = null;
             String name = "";
+            String iconString = "";
             try {
                 WeatherTask weatherTask = new WeatherTask(this);
                 weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location.getLatitude(), location.getLongitude());
@@ -58,6 +59,7 @@ public class TemperatureComplicationService extends ComplicationProviderService
                 tempMinKelvin = mainJson.getDouble("temp_min");
                 tempMaxKelvin = mainJson.getDouble("temp_max");
                 name = weatherJson.getString("name");
+                iconString = weatherJson.getJSONArray("weather").getJSONObject(0).getString("icon");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -101,8 +103,7 @@ public class TemperatureComplicationService extends ComplicationProviderService
             }
 
             if(complicationData != null) {
-                //todo icons for weather
-                //complicationData.setIcon(Icon.createWithResource(this, R.drawable.ic_sun));
+                complicationData.setIcon(Icon.createWithResource(this, iconCode(iconString)));
                 Intent intent = new Intent(this, MainActivity.class);
                 PendingIntent openAppIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
@@ -113,6 +114,22 @@ public class TemperatureComplicationService extends ComplicationProviderService
                 ((ComplicationManager) complicationManager).updateComplicationData(complicationId, complicationData.build());
             }
 
+        }
+    }
+
+    private int iconCode(String code){
+        int codeNum = Integer.parseInt(code.substring(0,2));
+        switch (codeNum){
+            case 1: return R.drawable.ic_sun;
+            case 2: return R.drawable.ic_part_cloud;
+            case 3: return R.drawable.ic_cloud;
+            case 4: return R.drawable.ic_broken_clouds;
+            case 9: return R.drawable.ic_rain;
+            case 10: return R.drawable.ic_light_rain;
+            case 11: return R.drawable.ic_thunder;
+            case 13: return R.drawable.ic_snow;
+            case 50: return R.drawable.ic_mist;
+            default: return 0;
         }
     }
 }
