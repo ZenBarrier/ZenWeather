@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/menu_temperature_unit"
-        android:icon="@drawable/ic_sun"
+        android:icon="@drawable/ic_thermometer"
         android:onClick="changeUnit"
         android:title="" />
 
