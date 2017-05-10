@@ -14,7 +14,6 @@ import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
-import android.util.Log;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
 import com.zenbarrier.mylibrary.PermissionActivity;
@@ -32,7 +31,8 @@ public class TemperatureComplicationService extends ComplicationProviderService
         implements GetLocationTask.ComplicationInterface {
     @Override
     public void onComplicationUpdate(int complicationId, int dataType, ComplicationManager complicationManager) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED){
             GetLocationTask locationTask = new GetLocationTask(this, complicationId, dataType, complicationManager);
             locationTask.execute();
         }else{
@@ -64,8 +64,8 @@ public class TemperatureComplicationService extends ComplicationProviderService
 
     @Override
     public void onComplicationActivated(int complicationId, int type, ComplicationManager manager) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            Log.d("COMPLICATION", "activated");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED){
             getPermission();
         }else {
             GetLocationTask locationTask = new GetLocationTask(this, complicationId, type, manager);
