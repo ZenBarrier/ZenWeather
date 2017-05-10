@@ -73,6 +73,13 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsCelsius = sharedPreferences.getBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), false);
+
+        long updateTime = sharedPreferences.getLong(WeatherTask.KEY_PREF_WEATHER_TIME_STAMP, 0);
+        long currentTime = System.currentTimeMillis();
+        long timeSinceUpdate = (currentTime - updateTime)/60000;
+
+        ((TextView)findViewById(R.id.textView_main_time)).setText(getString(R.string.update_time, timeSinceUpdate));
+
         MenuItem unitMenuItem = mWearableActionDrawer.getMenu().findItem(R.id.menu_temperature_unit);
         if (mIsCelsius) {
             unitMenuItem.setTitle("Change to °F");

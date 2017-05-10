@@ -52,7 +52,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/imageView_main_icon"
                 app:layout_constraintTop_toTopOf="@id/imageView_main_icon"
-                tools:text="67°F please grant location permission" />
+                tools:text="67°F" />
 
             <TextView
                 android:id="@+id/textView_main_city"
@@ -61,6 +61,17 @@
                 app:layout_constraintLeft_toLeftOf="@id/textView_main_temp"
                 app:layout_constraintTop_toBottomOf="@id/textView_main_temp"
                 tools:text="New York" />
+
+            <TextView
+                android:id="@+id/textView_main_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toLeftOf="@id/textView_main_temp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_main_city"
+                tools:text="Updated 30 minutes ago" />
 
         </android.support.constraint.ConstraintLayout>
 

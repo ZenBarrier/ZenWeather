@@ -21,7 +21,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     private boolean hasUpdated = false;
 
     private static final String TAG = WeatherTask.class.getSimpleName();
-    private static final String KEY_PREF_WEATHER_TIME_STAMP = "KEY_PREF_WEATHER_TIME_STAMP";
+    public static final String KEY_PREF_WEATHER_TIME_STAMP = "KEY_PREF_WEATHER_TIME_STAMP";
     private static final String KEY_PREF_WEATHER_JSON = "KEY_PREF_WEATHER_JSON";
     private static final long ONE_HOUR_MS = 3600 * 1000;
     private static final float DISTANCE_UPDATE_METERS = 160000;

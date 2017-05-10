@@ -9,4 +9,5 @@
     <string name="complication_permission_short">Consent</string>
     <string name="complication_no_gps_long">Please grant location permission.</string>
     <string name="content_description_location_status">Location status</string>
+    <string name="update_time">Updated %d minutes ago</string>
 </resources>
