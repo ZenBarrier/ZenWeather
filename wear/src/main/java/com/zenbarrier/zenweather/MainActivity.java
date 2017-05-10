@@ -59,7 +59,9 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
 
         GetLocationTask locationTask = new GetLocationTask(this);
         locationTask.execute();
-        ((ImageView)findViewById(R.id.imageView_main_location)).setImageResource(R.drawable.ic_location_on);
+        ImageView imageViewLocation = (ImageView) findViewById(R.id.imageView_main_location);
+        imageViewLocation.setImageResource(R.drawable.ic_location_on);
+        imageViewLocation.setOnClickListener(null);
 
         mWearableActionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer);
         mWearableActionDrawer.peekDrawer();
