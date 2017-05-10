@@ -50,9 +50,14 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
     }
 
     public void getPermission(View view){
+
+        Intent complicationIntent = getIntent();
+        int requestCode = complicationIntent.getIntExtra(PermissionActivity.KEY_EXTRA_REQUEST_CODE,
+                PermissionActivity.REQUEST_CODE_MAIN_WEAR);
+
         Intent intent = new Intent(this, PermissionActivity.class);
-        intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_MAIN_WEAR);
-        startActivityForResult(intent, PermissionActivity.REQUEST_CODE_MAIN_WEAR);
+        intent.putExtra(PermissionActivity.KEY_EXTRA_REQUEST_CODE, requestCode);
+        startActivityForResult(intent, requestCode);
     }
 
     private void init() {
@@ -84,6 +89,9 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         }else if(resultCode == RESULT_CANCELED && requestCode == PermissionActivity.REQUEST_CODE_MAIN_WEAR){
             mTextView.setText(R.string.complication_no_gps_long);
             ((ImageView)findViewById(R.id.imageView_main_location)).setImageResource(R.drawable.ic_location_off);
+        }else if(requestCode == PermissionActivity.REQUEST_CODE_COMPLICATION){
+            updateComplication();
+            finish();
         }
     }
 

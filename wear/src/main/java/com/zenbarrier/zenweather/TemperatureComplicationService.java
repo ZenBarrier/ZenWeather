@@ -37,8 +37,8 @@ public class TemperatureComplicationService extends ComplicationProviderService
             locationTask.execute();
         }else{
             ComplicationData.Builder complicationData;
-            Intent intent = new Intent(this, PermissionActivity.class);
-            intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_COMPLICATION);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(PermissionActivity.KEY_EXTRA_REQUEST_CODE, PermissionActivity.REQUEST_CODE_COMPLICATION);
             PendingIntent permissionIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             switch (dataType){
@@ -74,9 +74,8 @@ public class TemperatureComplicationService extends ComplicationProviderService
     }
 
     private void getPermission(){
-        Intent intent = new Intent(this, PermissionActivity.class);
-        intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_COMPLICATION);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(PermissionActivity.KEY_EXTRA_REQUEST_CODE, PermissionActivity.REQUEST_CODE_COMPLICATION);
         startActivity(intent);
     }
 
