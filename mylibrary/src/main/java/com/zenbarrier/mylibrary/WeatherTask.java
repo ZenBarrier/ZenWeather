@@ -2,6 +2,7 @@ package com.zenbarrier.mylibrary;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     private static final String KEY_PREF_WEATHER_TIME_STAMP = "KEY_PREF_WEATHER_TIME_STAMP";
     private static final String KEY_PREF_WEATHER_JSON = "KEY_PREF_WEATHER_JSON";
     private static final long ONE_HOUR_MS = 3600 * 1000;
+    private static final float DISTANCE_UPDATE_METERS = 160000;
 
     public interface WeatherTaskInterface {
         void onWeatherRetrieved(String result);
@@ -36,15 +38,22 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
 
     @Override
     protected String doInBackground(Double... params) {
+        double lat = params[0];
+        double lng = params[1];
 
         long timeStamp = sharedPreferences.getLong(KEY_PREF_WEATHER_TIME_STAMP, 0);
         long currentTimeStamp = System.currentTimeMillis();
         if((currentTimeStamp - timeStamp) <= ONE_HOUR_MS/2){
-            return sharedPreferences.getString(KEY_PREF_WEATHER_JSON, "");
+            float oldLat = sharedPreferences.getFloat(GetLocationTask.KEY_PREF_LATITUDE, 0);
+            float oldLng = sharedPreferences.getFloat(GetLocationTask.KEY_PREF_LONGITUDE, 0);
+            float[] distance = new float[1];
+            Location.distanceBetween(oldLat, oldLng, lat, lng, distance);
+
+            if(distance[0] < DISTANCE_UPDATE_METERS) {
+                return sharedPreferences.getString(KEY_PREF_WEATHER_JSON, "");
+            }
         }
 
-        double lat = params[0];
-        double lng = params[1];
         String appId = mContext.getString(R.string.weather_api);
         String urlString = String.format(Locale.getDefault(),
                 "http://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s", lat, lng, appId);
