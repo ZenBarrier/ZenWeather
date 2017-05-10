@@ -19,6 +19,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     private SharedPreferences sharedPreferences;
     private boolean hasUpdated = false;
 
+    private static final String TAG = WeatherTask.class.getSimpleName();
     private static final String KEY_PREF_WEATHER_TIME_STAMP = "KEY_PREF_WEATHER_TIME_STAMP";
     private static final String KEY_PREF_WEATHER_JSON = "KEY_PREF_WEATHER_JSON";
     private static final long ONE_HOUR_MS = 3600 * 1000;
@@ -36,7 +37,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     @Override
     protected String doInBackground(Double... params) {
 
-        long timeStamp = sharedPreferences.getLong(KEY_PREF_WEATHER_TIME_STAMP, System.currentTimeMillis());
+        long timeStamp = sharedPreferences.getLong(KEY_PREF_WEATHER_TIME_STAMP, 0);
         long currentTimeStamp = System.currentTimeMillis();
         if((currentTimeStamp - timeStamp) <= ONE_HOUR_MS/2){
             return sharedPreferences.getString(KEY_PREF_WEATHER_JSON, "");
@@ -81,8 +82,9 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        Log.d(TAG, result);
         if(hasUpdated && result.length() > 0) {
-            Log.d("WeatherTask", "has updated");
+            Log.d(TAG, "has updated");
             sharedPreferences.edit().putLong(KEY_PREF_WEATHER_TIME_STAMP, System.currentTimeMillis())
                     .putString(KEY_PREF_WEATHER_JSON, result).apply();
         }
