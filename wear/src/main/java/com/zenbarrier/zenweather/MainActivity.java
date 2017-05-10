@@ -14,6 +14,7 @@ import android.support.wearable.complications.ProviderUpdateRequester;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,26 +39,27 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mTextView = (TextView) findViewById(R.id.textView_main_temp);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            getPermission();
+            getPermission(null);
         }
         else {
             init();
         }
     }
 
-    private void getPermission(){
+    public void getPermission(View view){
         Intent intent = new Intent(this, PermissionActivity.class);
         intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_MAIN_WEAR);
         startActivityForResult(intent, PermissionActivity.REQUEST_CODE_MAIN_WEAR);
     }
 
     private void init() {
-        mTextView = (TextView) findViewById(R.id.textView_main_temp);
 
         GetLocationTask locationTask = new GetLocationTask(this);
         locationTask.execute();
+        ((ImageView)findViewById(R.id.imageView_main_location)).setImageResource(R.drawable.ic_location_on);
 
         mWearableActionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer);
         mWearableActionDrawer.peekDrawer();
@@ -78,7 +80,8 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         if(resultCode == RESULT_OK && requestCode == PermissionActivity.REQUEST_CODE_MAIN_WEAR){
             init();
         }else if(resultCode == RESULT_CANCELED && requestCode == PermissionActivity.REQUEST_CODE_MAIN_WEAR){
-            ((TextView)findViewById(R.id.textView_main_temp)).setText(R.string.complication_no_gps_long);
+            mTextView.setText(R.string.complication_no_gps_long);
+            ((ImageView)findViewById(R.id.imageView_main_location)).setImageResource(R.drawable.ic_location_off);
         }
     }
 

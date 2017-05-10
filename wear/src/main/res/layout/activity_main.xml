@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context="com.zenbarrier.zenweather.MainActivity"
     tools:deviceIds="wear">
 
 
@@ -19,35 +19,48 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="5dp"
-            app:layout_box="all">
+            android:padding="0dp"
+            app:layout_box="left|right">
+
+            <ImageView
+                android:id="@+id/imageView_main_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/content_description_location_status"
+                android:paddingBottom="10dp"
+                android:src="@drawable/ic_location_on"
+                android:onClick="getPermission"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView_main_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:contentDescription="@string/description_weather_icon"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/description_weather_icon"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="@+id/textView_main_city"/>
+                app:layout_constraintBottom_toBottomOf="@+id/textView_main_city"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_main_location" />
 
             <TextView
                 android:id="@+id/textView_main_temp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                tools:text="67°F"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="@id/imageView_main_icon"/>
+                app:layout_constraintRight_toLeftOf="@id/imageView_main_icon"
+                app:layout_constraintTop_toTopOf="@id/imageView_main_icon"
+                tools:text="67°F please grant location permission" />
 
             <TextView
                 android:id="@+id/textView_main_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="New York"
                 app:layout_constraintLeft_toLeftOf="@id/textView_main_temp"
-                app:layout_constraintTop_toBottomOf="@id/textView_main_temp"/>
+                app:layout_constraintTop_toBottomOf="@id/textView_main_temp"
+                tools:text="New York" />
 
         </android.support.constraint.ConstraintLayout>
 
