@@ -37,9 +37,14 @@ public class TemperatureComplicationService extends ComplicationProviderService
             locationTask.execute();
         }else{
             ComplicationData.Builder complicationData;
+            Intent intent = new Intent(this, PermissionActivity.class);
+            intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_COMPLICATION);
+            PendingIntent permissionIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             switch (dataType){
                 case ComplicationData.TYPE_SHORT_TEXT:
                     complicationData = new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT);
+                    complicationData.setTapAction(permissionIntent);
                     complicationData.setShortText(
                             ComplicationText.plainText(getString(R.string.complication_no_gps)));
                     complicationData.setShortTitle(
@@ -48,6 +53,7 @@ public class TemperatureComplicationService extends ComplicationProviderService
                     break;
                 case ComplicationData.TYPE_LONG_TEXT:
                     complicationData = new ComplicationData.Builder(ComplicationData.TYPE_LONG_TEXT);
+                    complicationData.setTapAction(permissionIntent);
                     complicationData.setLongText(
                             ComplicationText.plainText(getString(R.string.complication_no_gps_long)));
                     complicationManager.updateComplicationData(complicationId, complicationData.build());
