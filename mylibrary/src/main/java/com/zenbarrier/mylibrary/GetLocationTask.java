@@ -133,6 +133,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
     }
 
     private void getSavedLocation(){
+        Log.d(TAG, "Saved permissions got");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         float lat = sharedPreferences.getFloat(KEY_PREF_LATITUDE, 0);
         float lon = sharedPreferences.getFloat(KEY_PREF_LONGITUDE, 0);
