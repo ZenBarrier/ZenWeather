@@ -1,18 +1,23 @@
 package com.zenbarrier.zenweather;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
+import android.util.Log;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
+import com.zenbarrier.mylibrary.PermissionActivity;
 import com.zenbarrier.mylibrary.Weather;
 import com.zenbarrier.mylibrary.WeatherTask;
 import com.zenbarrier.mylibrary.WeatherUtil;
@@ -27,12 +32,46 @@ public class TemperatureComplicationService extends ComplicationProviderService
         implements GetLocationTask.ComplicationInterface {
     @Override
     public void onComplicationUpdate(int complicationId, int dataType, ComplicationManager complicationManager) {
-        GetLocationTask locationTask = new GetLocationTask(this, complicationId, dataType, complicationManager);
-        locationTask.execute();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            GetLocationTask locationTask = new GetLocationTask(this, complicationId, dataType, complicationManager);
+            locationTask.execute();
+        }else{
+            ComplicationData.Builder complicationData;
+            switch (dataType){
+                case ComplicationData.TYPE_SHORT_TEXT:
+                    complicationData = new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT);
+                    complicationData.setShortText(
+                            ComplicationText.plainText(getString(R.string.complication_no_gps)));
+                    complicationData.setShortTitle(
+                            ComplicationText.plainText(getString(R.string.complication_permission_short)));
+                    complicationManager.updateComplicationData(complicationId, complicationData.build());
+                    break;
+                case ComplicationData.TYPE_LONG_TEXT:
+                    complicationData = new ComplicationData.Builder(ComplicationData.TYPE_LONG_TEXT);
+                    complicationData.setLongText(
+                            ComplicationText.plainText(getString(R.string.complication_no_gps_long)));
+                    complicationManager.updateComplicationData(complicationId, complicationData.build());
+                    break;
+            }
+        }
     }
 
     @Override
     public void onComplicationActivated(int complicationId, int type, ComplicationManager manager) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            Log.d("COMPLICATION", "activated");
+            getPermission();
+        }else {
+            GetLocationTask locationTask = new GetLocationTask(this, complicationId, type, manager);
+            locationTask.execute();
+        }
+    }
+
+    private void getPermission(){
+        Intent intent = new Intent(this, PermissionActivity.class);
+        intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_COMPLICATION);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override

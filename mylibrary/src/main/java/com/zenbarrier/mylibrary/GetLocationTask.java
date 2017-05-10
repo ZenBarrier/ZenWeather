@@ -125,6 +125,7 @@ public class GetLocationTask extends AsyncTask<Void, Void, Location> {
                         getSavedLocation();
                     }
                 }else{
+                    Log.d(TAG, "No permission");
                     getSavedLocation();
                 }
             }

@@ -1,11 +1,15 @@
 package com.zenbarrier.zenweather;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.wearable.complications.ProviderUpdateRequester;
 import android.support.wearable.view.drawer.WearableActionDrawer;
 import android.util.Log;
@@ -14,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zenbarrier.mylibrary.GetLocationTask;
+import com.zenbarrier.mylibrary.PermissionActivity;
 import com.zenbarrier.mylibrary.Weather;
 import com.zenbarrier.mylibrary.WeatherTask;
 import com.zenbarrier.mylibrary.WeatherUtil;
@@ -34,6 +39,21 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            getPermission();
+        }
+        else {
+            init();
+        }
+    }
+
+    private void getPermission(){
+        Intent intent = new Intent(this, PermissionActivity.class);
+        intent.putExtra(getString(R.string.extra_permission_request_code), PermissionActivity.REQUEST_CODE_MAIN_WEAR);
+        startActivityForResult(intent, PermissionActivity.REQUEST_CODE_MAIN_WEAR);
+    }
+
+    private void init() {
         mTextView = (TextView) findViewById(R.id.textView_main_temp);
 
         GetLocationTask locationTask = new GetLocationTask(this);
@@ -45,10 +65,20 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsCelsius = sharedPreferences.getBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), false);
         MenuItem unitMenuItem = mWearableActionDrawer.getMenu().findItem(R.id.menu_temperature_unit);
-        if(mIsCelsius){
+        if (mIsCelsius) {
             unitMenuItem.setTitle("Change to °F");
-        }else{
+        } else {
             unitMenuItem.setTitle("Change to °C");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == PermissionActivity.REQUEST_CODE_MAIN_WEAR){
+            init();
+        }else if(resultCode == RESULT_CANCELED && requestCode == PermissionActivity.REQUEST_CODE_MAIN_WEAR){
+            ((TextView)findViewById(R.id.textView_main_temp)).setText(R.string.complication_no_gps_long);
         }
     }
 
