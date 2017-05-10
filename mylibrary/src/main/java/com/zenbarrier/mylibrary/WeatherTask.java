@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +19,6 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     private SharedPreferences sharedPreferences;
     private boolean hasUpdated = false;
 
-    private static final String TAG = WeatherTask.class.getSimpleName();
     public static final String KEY_PREF_WEATHER_TIME_STAMP = "KEY_PREF_WEATHER_TIME_STAMP";
     private static final String KEY_PREF_WEATHER_JSON = "KEY_PREF_WEATHER_JSON";
     private static final long ONE_HOUR_MS = 3600 * 1000;
@@ -91,9 +89,7 @@ public class WeatherTask extends AsyncTask<Double, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        Log.d(TAG, result);
         if(hasUpdated && result.length() > 0) {
-            Log.d(TAG, "has updated");
             sharedPreferences.edit().putLong(KEY_PREF_WEATHER_TIME_STAMP, System.currentTimeMillis())
                     .putString(KEY_PREF_WEATHER_JSON, result).apply();
         }

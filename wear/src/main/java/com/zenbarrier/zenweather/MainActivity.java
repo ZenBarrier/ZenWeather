@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.wearable.complications.ProviderUpdateRequester;
 import android.support.wearable.view.drawer.WearableActionDrawer;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,7 +29,6 @@ import org.json.JSONException;
 public class MainActivity extends Activity implements WeatherTask.WeatherTaskInterface,
         GetLocationTask.LocationTaskInterface {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mTextView;
     private WearableActionDrawer mWearableActionDrawer;
     private boolean mIsCelsius;
@@ -152,7 +150,6 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
 
     @Override
     public void onLocationFound(Location location) {
-        Log.d(TAG, location.toString());
         WeatherTask weatherTask = new WeatherTask(this);
         weatherTask.execute(location.getLatitude(), location.getLongitude());
     }
