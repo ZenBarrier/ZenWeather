@@ -96,6 +96,8 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
             ((ImageView)findViewById(R.id.imageView_main_icon)).setImageResource(weather.getIconResourceCode());
             ((TextView)findViewById(R.id.textView_main_city)).setText(name);
             setTemperatureDisplay(mTemperatureK);
+
+            updateComplication();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,13 +121,17 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         sharedPreferences.edit().putBoolean(getString(R.string.KEY_PREF_IS_CELSIUS), mIsCelsius).apply();
 
         setTemperatureDisplay(mTemperatureK);
-        ComponentName componentName = new ComponentName(this, TemperatureComplicationService.class);
 
-        ProviderUpdateRequester providerUpdateRequester = new ProviderUpdateRequester(this, componentName);
-        providerUpdateRequester.requestUpdateAll();
+        updateComplication();
 
         mWearableActionDrawer.peekDrawer();
 
+    }
+
+    private void updateComplication(){
+        ComponentName componentName = new ComponentName(this, TemperatureComplicationService.class);
+        ProviderUpdateRequester providerUpdateRequester = new ProviderUpdateRequester(this, componentName);
+        providerUpdateRequester.requestUpdateAll();
     }
 
     @Override
