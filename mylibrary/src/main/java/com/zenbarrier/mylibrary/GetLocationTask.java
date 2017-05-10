@@ -26,8 +26,8 @@ import com.google.android.gms.wearable.Wearable;
 public class GetLocationTask extends AsyncTask<Void, Void, Location> {
 
     private static final String TAG = GetLocationTask.class.getSimpleName();
-    public static final String KEY_PREF_LATITUDE = "KEY_PREF_LATITUDE";
-    public static final String KEY_PREF_LONGITUDE = "KEY_PREF_LONGITUDE";
+    static final String KEY_PREF_LATITUDE = "KEY_PREF_LATITUDE";
+    static final String KEY_PREF_LONGITUDE = "KEY_PREF_LONGITUDE";
 
     private Context mContext;
     private LocationListener mLocationListener;
