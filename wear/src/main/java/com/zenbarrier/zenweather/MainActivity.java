@@ -2,6 +2,7 @@ package com.zenbarrier.zenweather;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -156,4 +157,12 @@ public class MainActivity extends Activity implements WeatherTask.WeatherTaskInt
         weatherTask.execute(location.getLatitude(), location.getLongitude());
     }
 
+    public void aboutDialog(MenuItem item) throws PackageManager.NameNotFoundException {
+        String version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.about_message, version))
+                .setTitle(R.string.menu_about)
+        .setNeutralButton(R.string.close_about, null);
+        builder.show();
+    }
 }

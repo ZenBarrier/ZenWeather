@@ -6,4 +6,9 @@
         android:onClick="changeUnit"
         android:title="" />
 
+    <item android:id="@+id/menu_about"
+        android:icon="@drawable/ic_info"
+        android:onClick="aboutDialog"
+        android:title="@string/menu_about" />
+
 </menu>
